@@ -2,8 +2,12 @@
 layout: default
 ---
 
-<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
-<script src="js/bundle.js"></script>
+<script
+src="https://code.jquery.com/jquery-3.2.1.js"
+integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+crossorigin="anonymous"></script>
+
+<script src="js/bulletprooflist.js"></script>
 
 <div class="home">
 
@@ -17,55 +21,21 @@ layout: default
   <div>
     <textarea id="htmlTextarea"></textarea>
   </div>
-  <button id="generateButton">Generate</button>
+  <button id="generateButton" onclick="generate()">Generate</button>
   
-  <h3>The text version</h3>
+  <h3>Bulletproof version</h3>
   <div>
-    <textarea id="textVersionTextarea"></textarea>
+    <textarea id="bulletproofTextarea"></textarea>
   </div>
 
   <script>
     function generate() {
       var htmlTextarea = document.getElementById("htmlTextarea");
-      var textVersionTextarea = document.getElementById("textVersionTextarea");
+      var bulletproofTextarea = document.getElementById("bulletproofTextarea");
 
-      textVersionTextarea.value = createBulletproofList(htmlTextarea.value);
+      bulletproofTextarea.value = bulletprooflist(String(htmlTextarea.value));
 
       ga("send", "event", "generate");
     }
-
-    var generateButton = document.getElementById("generateButton");
-    generateButton.onclick = generate;
   </script>
-
-
-  <h3>CommonJS: Node.js / Browserify</h3>
-
-  {% highlight bash %}
-    npm install bulletprooflist --save
-  {% endhighlight %}
-
-  {% highlight javascript %}
-    var createbulletprooflist = require("bulletprooflist");
-    var yourHtml = "<h1>Your HTML</h1><ul><li>goes</li><li>here.</li></ul>";
-
-    var bulletprooflist = createbulletprooflist(yourHtml);
-  {% endhighlight %}
-
-  <h3>Vanilla JS</h3>
-  {% highlight html %}
-    <script src="bulletprooflist.js"></script>
-    <script>
-      var yourHtml = "<h1>Your HTML</h1><ul><li>goes</li><li>here.</li></ul>";
-      var bulletprooflist = createbulletprooflist(yourHtml);
-    </script>
-  {% endhighlight %}
-
-  <h3>AMD: RequireJS</h3>
-  {% highlight javascript %}
-    define(["bulletprooflist"], function(createbulletprooflist) {
-      var yourHtml = "<h1>Your HTML</h1><ul><li>goes</li><li>here.</li></ul>";
-      var bulletprooflist = createbulletprooflist(yourHtml);
-    });
-  {% endhighlight %}
 </div>

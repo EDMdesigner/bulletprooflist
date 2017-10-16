@@ -3,7 +3,7 @@ var cheerio = require("cheerio");
 /**
 * Converts ordered and unordered lists to tables.
 */
-var listsToTables = ((function(cheerio) {
+var bulletproofList = ((function(cheerio) {
 	function createProcessLiFn(numbered) {
 		var bullet = ((function() {
 			if (numbered) {
@@ -21,19 +21,18 @@ var listsToTables = ((function(cheerio) {
 			};
 		})());
 
-        return function processLi(idx, actLiElem) {
-            var act = $(actLiElem);
-                    
-            var actContent = act.html();
-            var actStyles = act.attr("style");
+		return function processLi(idx, actLiElem) {
+			var act = $(actLiElem);
 
-            var tr = $("<tr></tr>");
-        
-            tr.append($("<td align=\"left\" width=\"15\" valign=\"top\" style=\"" + actStyles + "\">" + bullet(idx) + "</td>"));
-            tr.append($("<td align=\"left\" style=\"" + actStyles + "\"></td>").html(actContent));
-            act.replaceWith(tr);
-        };
-    }
+			var actContent = act.html();
+
+			var tr = $("<tr></tr>");
+
+			tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + bullet(idx) + "</td>"));
+			tr.append($("<td align=\"left\"></td>").html(actContent));
+			act.replaceWith(tr);
+		};
+	}
 
 	function createProcessListElemFn(numbered) {
 		var liProcessor = createProcessLiFn(numbered);
@@ -51,7 +50,7 @@ var listsToTables = ((function(cheerio) {
 	var processOl = createProcessListElemFn(true);
 	var processUl = createProcessListElemFn(false);
 
-	function listsToTables(htmlString) {
+	function bulletproofList(htmlString) {
 		$ = cheerio.load(htmlString, {
 			decodeEntities: false,
 			normalizeWhitespace: false
@@ -74,15 +73,15 @@ var listsToTables = ((function(cheerio) {
 		return $.html();
 	}
 
-	return listsToTables;
+	return bulletproofList;
 })(cheerio));
 
 (function (name, definition){
-	// if (typeof this.define === "function"){ // AMD
-	// 	this.define(definition);
-	// } else if (typeof module !== "undefined" && module.exports) { // Node.js
-	// 	module.exports = definition();
-	// } else { // Browser
+	if (this && typeof this.define === "function"){ // AMD
+		this.define(definition);
+	} else if (typeof module !== "undefined" && module.exports) { // Node.js
+		module.exports = definition();
+	} else { // Browser
 		var theModule = definition();
 		var global = this;
 		var old = global[name];
@@ -91,7 +90,7 @@ var listsToTables = ((function(cheerio) {
 			return theModule;
 		};
 		global[name] = theModule;
-	//}
-})("createBulletproofList", function () {
-	return listsToTables;
+	}
+})("bulletprooflist", function () {
+	return bulletproofList;
 });
