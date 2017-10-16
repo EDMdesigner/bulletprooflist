@@ -13,9 +13,8 @@
   "keywords": [
     "email",
     "html",
-    "text",
-    "version",
-    "plaintext"
+    "bulletproof",
+    "list"
   ],
   "author": "EDMdesigner.com",
   "maintainers": [
@@ -35,12 +34,7 @@
   "homepage": "https://github.com/EDMdesigner/bulletprooflist#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-jasmine": "^2.4.0",
-    "gulp-jscs": "3.0.2",
-    "gulp-jscs-stylish": "^1.4.0",
-    "gulp-jshint": "^2.0.1",
-    "gulp-jsonlint": "^1.1.2",
-    "jshint": "^2.9.2"
+    "edm-supergulp": "^0.2.1"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2"
