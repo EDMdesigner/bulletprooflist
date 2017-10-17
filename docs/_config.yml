@@ -14,7 +14,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 
 url: "https://edmdesigner.github.io/bulletprooflist/" # the base hostname & protocol for your site
 demo: "https://edmdesigner.github.io/bulletprooflist/"
-gaCode: UA-42954042-7
+gaCode: UA-42954042-11
 facebook_username: edmdesigner
 twitter_username: EDMdesigner
 github_username: EDMdesigner
