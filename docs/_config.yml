@@ -11,14 +11,16 @@ email: info@edmdesigner.com
 description: > # this means to ignore newlines until "baseurl:"
   With Bulletprooflist you can easily generate the bulletrproof email version of an HTML list.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://bulletprooflist.com" # the base hostname & protocol for your site
-demo: "https://bulletprooflist.com"
+
+url: "https://edmdesigner.github.io/bulletprooflist/" # the base hostname & protocol for your site
+demo: "https://edmdesigner.github.io/bulletprooflist/"
 gaCode: UA-42954042-7
 facebook_username: edmdesigner
 twitter_username: EDMdesigner
 github_username: EDMdesigner
 linkedin_username: company/edmdesigner-com
 google_username: +Edmdesigner
+projectname: bulletprooflist 
 
 # Build settings
 markdown: kramdown
