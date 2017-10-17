@@ -1,0 +1,41 @@
+---
+layout: default
+---
+
+<script
+src="https://code.jquery.com/jquery-3.2.1.js"
+integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+crossorigin="anonymous"></script>
+
+<script src="js/bulletprooflist.js"></script>
+
+<div class="home">
+
+  <h2>Generate bulletproof lists for email from regular lists</h2>
+
+  <p>You can use it for email template development. The code will support most of the email clients with the 
+    well-supported HTML and CSS properties it uses.
+  </p>
+
+  <h3>Paste your email HTML here</h3>
+  <div>
+    <textarea id="htmlTextarea"></textarea>
+  </div>
+  <button id="generateButton" onclick="generate()">Generate</button>
+  
+  <h3>Bulletproof version</h3>
+  <div>
+    <textarea id="bulletproofTextarea"></textarea>
+  </div>
+
+  <script>
+    function generate() {
+      var htmlTextarea = document.getElementById("htmlTextarea");
+      var bulletproofTextarea = document.getElementById("bulletproofTextarea");
+
+      bulletproofTextarea.value = bulletprooflist(String(htmlTextarea.value));
+
+      ga("send", "event", "generate");
+    }
+  </script>
+</div>

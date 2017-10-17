@@ -1,3 +1,9 @@
+---
+layout: page
+title: Documentation
+permalink: /documentation/
+---
+
 # bulletprooflist
 
 A universal tool to convert unordered and ordered lists in HTML file to bulletproof email HTML list by changing

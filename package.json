@@ -1,0 +1,42 @@
+{
+  "name": "bulletprooflist",
+  "version": "0.0.1",
+  "description": "Email-safe HTML list converter",
+  "main": "src/bulletprooflist.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EDMdesigner/bulletprooflist.git"
+  },
+  "keywords": [
+    "email",
+    "html",
+    "bulletproof",
+    "list"
+  ],
+  "author": "EDMdesigner.com",
+  "maintainers": [
+    {
+      "name": "Mihály Sáróy",
+      "email": "saroy.mihaly@gmail.com"
+    },
+    {
+      "name": "Attila Stubendek",
+      "email": "stubendek.attila@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EDMdesigner/bulletprooflist/issues"
+  },
+  "homepage": "https://github.com/EDMdesigner/bulletprooflist#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "edm-supergulp": "^0.2.1"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2"
+  }
+}
