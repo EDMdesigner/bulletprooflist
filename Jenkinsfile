@@ -9,37 +9,18 @@ pipeline {
 				sh 'npm install'
 			}
 		}
-		stage('test') {
-			steps {
-				sh 'npm test'
-			}
-		}
-		stage('publish test results') {
-			steps {
-				junit 'junitresults.xml'
-				step(
-					[$class: 'CoberturaPublisher',
-					autoUpdateHealth: false,
-					autoUpdateStability: false,
-					coberturaReportFile: 'coverage/cobertura-coverage.xml',
-					failUnhealthy: false,
-					failUnstable: false,
-					maxNumberOfBuilds: 0,
-					onlyStable: false,
-					sourceEncoding: 'ASCII',
-					zoomCoverageChart: false]
-				)
-			}
-		}
-		stage('publish') {
+		stage('deploy and publish') {
 			when {
 				branch "master"
 			}
 			steps {
-				sh 'npm publish'
+				withNPM(npmrcConfig:'npmrc-global') {
+					sh 'npm publish'
+				}
 			}
 		}
 	}
+	
 	post {
 		always {
 			cleanWs()
