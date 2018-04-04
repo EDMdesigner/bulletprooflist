@@ -37,6 +37,6 @@
     "edm-supergulp": "^0.2.1"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2"
+    "cheerio": "0.22.0"
   }
 }
