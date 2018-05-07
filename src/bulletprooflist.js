@@ -23,7 +23,6 @@ var bulletproofList = ((function(cheerio) {
 
 		return function processLi(idx, actLiElem) {
 			var act = $(actLiElem);
-
 			var actContent = act.html();
 
 			var tr = $("<tr></tr>");
@@ -38,9 +37,18 @@ var bulletproofList = ((function(cheerio) {
 		var liProcessor = createProcessLiFn(numbered);
 
 		return function processListElem(act) {
-			act.children("li").each(liProcessor);
+			var processedListElems = act.children("li").each(liProcessor);
 
-			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"></table>");
+			// if alignment is defined for the FIRST text element...
+			var tableAlign = "";
+			
+			if(processedListElems[0].attribs.hasOwnProperty("style")) {
+				// ... it is extracted to be used on the whole bulletproof table 
+				var listAlign = processedListElems[0].attribs.style.split(":").pop();
+				tableAlign = "align=\"" + listAlign + "\"";
+			}
+
+			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + tableAlign + "></table>");
 
 			table.html(act.html());
 			act.replaceWith(table);
