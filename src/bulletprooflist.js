@@ -44,7 +44,8 @@ var bulletproofList = ((function(cheerio) {
 			
 			if(processedListElems[0].attribs.hasOwnProperty("style")) {
 				// ... it is extracted to be used on the whole bulletproof table 
-				var listAlign = processedListElems[0].attribs.style.split(":").pop();
+				var listAlign = processedListElems[0].attribs.style.split(":")[1].split(";").shift().trim();
+				console.log(listAlign);
 				tableAlign = "align=\"" + listAlign + "\"";
 			}
 
