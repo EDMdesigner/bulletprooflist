@@ -4,60 +4,91 @@ var cheerio = require("cheerio");
 * Converts ordered and unordered lists to tables.
 */
 var bulletproofList = ((function(cheerio) {
-	function createProcessLiFn(numbered) {
-		var bullet = ((function() {
-			if (numbered) {
-				return function(idx) {
-					return idx + 1 + ".";
-				};
-			}
 
-			return function() {
-				//return "*";
-				return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
-				//return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
-				//return "&bull;";
-				//return "&bullet;";
-			};
-		})());
+	function processList(numbered) {
+		var tableAligns =  [];
 
-		return function processLi(idx, actLiElem) {
-			var act = $(actLiElem);
-			var actContent = act.html();
-
-			var tr = $("<tr></tr>");
-
-			tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + bullet(idx) + "</td>"));
-			tr.append($("<td align=\"left\"></td>").html(actContent));
-			act.replaceWith(tr);
+		var listItemProcessor = function (act, func) {
+			act.children("li").each(func);
 		};
-	}
 
-	function createProcessListElemFn(numbered) {
-		var liProcessor = createProcessLiFn(numbered);
-
-		return function processListElem(act) {
-			var processedListElems = act.children("li").each(liProcessor);
-
-			// if alignment is defined for the FIRST text element...
-			var tableAlign = "";
+		var alignmentModifier = (function () {
+			var tableAlign =  ""
 			
-			if(processedListElems[0].attribs.hasOwnProperty("style")) {
-				// ... it is extracted to be used on the whole bulletproof table 
-				var listAlign = processedListElems[0].attribs.style.split(":")[1].split(";").shift().trim();
-				console.log(listAlign);
-				tableAlign = "align=\"" + listAlign + "\"";
+
+			return function (idx, actLiElem) {
+				var act = $(actLiElem);
+				console.log(act.css(["text-align"]))
+				tableAligns.push(act.css(["text-align"]));
+			};
+		})();
+		// console.log(typeof listItemCollection)
+		// var alignment = act.css(["text-align"]);
+		// console.log("alignment", act.prop(["text-align"]))
+		
+		
+		// console.log(processedListElems)
+		// if alignment is defined for the FIRST text element...
+		// console.log("geciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", processedListElems/*.css(["style"])*/)
+		// if(processedListElems[0].attribs.hasOwnProperty("style")) {
+		// 	// ... it is extracted to be used on the whole bulletproof table 
+		// 	var listAlign = processedListElems[0].attribs.style.split(":")[1].split(";").shift().trim();
+		// 	// console.log(listAlign);
+		// 	tableAlign = "align=\"" + listAlign + "\"";
+		// }
+
+		var listItemBulletproofer = (function (numbered) {
+			// REPLACES LIST ITEMS WITH TABLE ROWS AND TABLE CELLS 
+			var bullet = ((function() {
+				if (numbered) {
+					return function(idx) {
+						return idx + 1 + ".";
+					};
+				}
+	
+				return function() {
+					return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
+					return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
+					//return "&bull;";
+					//return "&bullet;";
+					//return "*";					
+				};
+			})());
+	
+			return function (idx, actLiElem) {
+				var act = $(actLiElem);
+				var actContent = act.html();
+	
+				var tr = $("<tr></tr>");
+	
+				tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + bullet(idx) + "</td>"));
+				tr.append($("<td align=\"left\"></td>").html(actContent));
+				act.replaceWith(tr);
+			};
+		})();
+
+		return function (act) {
+			var alignment = "";
+			// REPLACES THE UL / OL WITH THE BUILT TABLE
+			listItemProcessor(act, listItemBulletproofer);
+			listItemProcessor(act, alignmentModifier);
+			// var processedListElems = listItemCollection.each(listItemBulletproofer);
+			const allEqual = tableAligns => tableAligns.every( v => v === tableAligns[0] );
+			if (allEqual(tableAligns)){
+				alignment = tableAligns[0]
 			}
 
-			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + tableAlign + "></table>");
+			console.log(alignment)
+
+			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + alignment + "></table>");
 
 			table.html(act.html());
 			act.replaceWith(table);
 		};
 	}
 
-	var processOl = createProcessListElemFn(true);
-	var processUl = createProcessListElemFn(false);
+	var processOl = processList(true);
+	var processUl = processList(false);
 
 	function bulletproofList(htmlString) {
 		$ = cheerio.load(htmlString, {
