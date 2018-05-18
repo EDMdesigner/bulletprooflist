@@ -1,67 +1,61 @@
-var cheerio = require("cheerio");
+const cheerio = require("cheerio");
 
 /**
 * Converts ordered and unordered lists to tables.
 */
-var bulletproofList = ((function(cheerio) {
-    
+const bulletproofList = ((function(cheerio) {
 
 	function listElemProcessorFn(numbered) {
-        var tableAligns = [];
+        let tableAligns = [];
         
-        var alignmentModifier = (function () {
+        function listAlignmentModifier(idx, actLiElem) {
+            const act = $(actLiElem);
+            const alignProp = act.css(["text-align"])["text-align"];
+            
+            if (alignProp) {
+                tableAligns.push(alignProp);
+            }
+        };
+        
+        function listElemBulletproofer(idx, actLiElem) {
 
-			return function (idx, actLiElem) {
-                var act = $(actLiElem);
-                var alignProp = act.css(["text-align"])["text-align"];
-                
-                if (alignProp) {
-                    tableAligns.push(alignProp);
-                }
-			};
-		})();
-        
-        var liProcessor = (function (numbered) {
-            var bullet = ((function listElemMarker() {
+            function listElemMarker() {
                 if (numbered) {
                     return function(idx) {
                         return idx + 1 + ".";
                     };
                 }
     
-                return function() {
-                    //return "*";
-                    return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
-                    //return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
-                    //return "&bull;";
-                    //return "&bullet;";
-                };
-            })());
-    
-            return function listElemBulletproofer(idx, actLiElem) {
-                var act = $(actLiElem);
-    
-                var actContent = act.html();
-    
-                var tr = $("<tr></tr>");
-
-                tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + bullet(idx) + "</td>"));
-                tr.append($("<td align=\"left\"></td>").html(actContent));
-                act.replaceWith(tr);
+                //return "*";
+                return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
+                //return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
+                //return "&bull;";
+                //return "&bullet;";
             };
-        })(numbered);
+    
+
+            const act = $(actLiElem);
+
+            const actContent = act.html();
+
+            const tr = $("<tr></tr>");
+
+            tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + listElemMarker(idx) + "</td>"));
+            tr.append($("<td align=\"left\"></td>").html(actContent));
+            act.replaceWith(tr); 
+        };
 
 		return function processListElems(act) {
             
-            act.children("li").each(alignmentModifier);
-            act.children("li").each(liProcessor);
+            act.children("li").each(listAlignmentModifier);
+            act.children("li").each(listElemBulletproofer);
 
             // CHECK LIST ITEM ALIGNMENT
-            var equalityChecker = tableAligns.every((v, i, a) => i === 0 || v === a[i - 1] );
+            const equalityChecker = tableAligns.every((v, i, a) => i === 0 || v === a[i - 1] );
             const alignmentProp = equalityChecker && tableAligns.length !== 0 ? tableAligns[0] : "";
             const alignment = alignmentProp ? "align=\"" + alignmentProp + "\"" : "";
 
-            var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" " + alignment + "></table>");
+            const table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" " + alignment + "></table>");
 
             // set back alignments for the next list
             tableAligns = [];
@@ -71,8 +65,8 @@ var bulletproofList = ((function(cheerio) {
 		};
 	}
 
-	var processOl = listElemProcessorFn(true);
-	var processUl = listElemProcessorFn(false);
+	const processOl = listElemProcessorFn(true);
+	const processUl = listElemProcessorFn(false);
 
 	function bulletproofList(htmlString) {
 		$ = cheerio.load(htmlString, {
@@ -80,15 +74,15 @@ var bulletproofList = ((function(cheerio) {
 			normalizeWhitespace: false
 		});
 
-		var uls = $("ul");
+		const uls = $("ul");
 		//Has to be processed in reverse order, because it's using in-depth search...
-		var idx;
+		let idx;
 
 		for (idx = uls.length - 1; idx >= 0; idx -= 1) {
 			processUl($(uls[idx]));
 		}
 
-		var ols = $("ol");
+		const ols = $("ol");
 
 		for (idx = ols.length - 1; idx >= 0; idx -= 1) {
 			processOl($(ols[idx]));
@@ -106,9 +100,9 @@ var bulletproofList = ((function(cheerio) {
 	} else if (typeof module !== "undefined" && module.exports) { // Node.js
 		module.exports = definition();
 	} else { // Browser
-		var theModule = definition();
-		var global = this;
-		var old = global[name];
+		const theModule = definition();
+		const global = this;
+		const old = global[name];
 		theModule.noConflict = function () {
 			global[name] = old;
 			return theModule;
