@@ -22,9 +22,7 @@ const bulletproofList = ((function(cheerio) {
 
 			function listElemMarker() {
 				if (numbered) {
-					return function(idx) {
-						return idx + 1 + ".";
-					};
+					return idx + 1 + ".";
 				}
 	
 				//return "*";
