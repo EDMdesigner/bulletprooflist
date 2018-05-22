@@ -70,7 +70,7 @@ const bulletproofList = ((function(cheerio) {
 	const processUl = listElemProcessorFn(false);
 
 	function bulletproofList(htmlString) {
-		$ = cheerio.load(htmlString, {
+		const $ = cheerio.load(htmlString, {
 			decodeEntities: false,
 			normalizeWhitespace: false
 		});
