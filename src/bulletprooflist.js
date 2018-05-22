@@ -43,7 +43,7 @@ const bulletproofList = ((function(cheerio) {
 
 			tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + listElemMarker(idx) + "</td>"));
 			tr.append($("<td align=\"left\"></td>").html(actContent));
-			act.replaceWith(tr); 
+			act.replaceWith(tr);
 		};
 
 		return function processListElems(act) {
