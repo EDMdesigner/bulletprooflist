@@ -4,7 +4,7 @@ var cheerio = require("cheerio");
 * Converts ordered and unordered lists to tables.
 */
 var bulletproofList = ((function(cheerio) {
-	
+
 	function processList(numbered) {
 		var tableAligns = [];
 
@@ -48,11 +48,11 @@ var bulletproofList = ((function(cheerio) {
 			act.children("li").each(processListElem);
 
 			// CHECK LIST ITEM ALIGNMENT
-			var equalityChecker = tableAligns.every((v, i, a) => i === 0 || v === a[i - 1] );
+			var equalityChecker = tableAligns.every((currentValue, idx, array) => currentValue === array[array.length -1] || currentValue === array[idx - 1]);
 			var alignmentProp = equalityChecker && tableAligns.length !== 0 ? tableAligns[0] : "";
-			var alignment = alignmentProp ? "align=\"" + alignmentProp + "\"" : "";
+			var alignment = alignmentProp ? " align=\"" + alignmentProp + "\"" : "";
 
-			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" " + alignment + "></table>");
+			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + alignment + "></table>");
 
 			// set back alignments for the next list
 			tableAligns = [];
