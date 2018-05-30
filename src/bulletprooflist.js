@@ -6,7 +6,6 @@ var cheerio = require("cheerio");
 var bulletproofList = ((function(cheerio) {
 
 	function processList(numbered) {
-		var tableAligns = [];
 
 		var processListElem = (function listElemBulletproofer(numbered) {
 			var listElemMarker = ((function() {
@@ -27,12 +26,6 @@ var bulletproofList = ((function(cheerio) {
 	
 			return function bulletProofLiElem(idx, actLiElem) {
 				var act = $(actLiElem);
-
-				var alignProp = act.css(["text-align"])["text-align"];
-			
-				if (alignProp) {
-					tableAligns.push(alignProp);
-				}
 	
 				var actContent = act.html();
 	
@@ -45,17 +38,27 @@ var bulletproofList = ((function(cheerio) {
 		})(numbered);
 
 		return function processedList(act) {
-			act.children("li").each(processListElem);
+			var alignments = [];
+			var alignmentObj = act.children("li").each(processListElem).css(["text-align"]);
+			var actAlignProp = alignmentObj["text-align"];
+			
+			if (actAlignProp) {
+				alignments.push(actAlignProp);
+			}
 
-			// CHECK LIST ITEM ALIGNMENT
-			var equalityChecker = tableAligns.every((currentValue, idx, array) => currentValue === array[array.length - 1] || currentValue === array[idx - 1]);
-			var alignmentProp = equalityChecker && tableAligns.length !== 0 ? tableAligns[0] : "";
-			var alignment = alignmentProp ? " align=\"" + alignmentProp + "\"" : "";
+			function align() {
+				if (alignments.length !== 0) {
+					var allMatch = alignments.every((currentValue, idx, array) => array[0] === currentValue);
+				}
+					
+				allMatch 
+					? alignment = " align=\"" +  alignments[0] + "\""
+					: alignment = "";
 
-			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + alignment + "></table>");
+				return alignment;
+			};
 
-			// set back alignments for the next list
-			tableAligns = [];
+			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + align() + "></table>");
 
 			table.html(act.html());
 			act.replaceWith(table);
