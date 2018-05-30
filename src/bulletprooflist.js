@@ -48,7 +48,7 @@ var bulletproofList = ((function(cheerio) {
 			act.children("li").each(processListElem);
 
 			// CHECK LIST ITEM ALIGNMENT
-			var equalityChecker = tableAligns.every((currentValue, idx, array) => currentValue === array[array.length -1] || currentValue === array[idx - 1]);
+			var equalityChecker = tableAligns.every((currentValue, idx, array) => currentValue === array[array.length - 1] || currentValue === array[idx - 1]);
 			var alignmentProp = equalityChecker && tableAligns.length !== 0 ? tableAligns[0] : "";
 			var alignment = alignmentProp ? " align=\"" + alignmentProp + "\"" : "";
 
