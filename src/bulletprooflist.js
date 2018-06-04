@@ -4,6 +4,7 @@ var cheerio = require("cheerio");
 * Converts ordered and unordered lists to tables.
 */
 var bulletproofList = ((function(cheerio) {
+
 	function processList(numbered) {
 
 		var processListElem = (function listElemBulletproofer(numbered) {
@@ -45,7 +46,7 @@ var bulletproofList = ((function(cheerio) {
 				alignments.push(actAlignProp);
 			}
 
-			function getAlignment() {
+			function align() {
 				if (alignments.length !== 0) {
 					var allMatch = alignments.every((currentValue, idx, array) => array[0] === currentValue);
 				}
@@ -57,7 +58,7 @@ var bulletproofList = ((function(cheerio) {
 				return alignment;
 			};
 
-			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + getAlignment() + "></table>");
+			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + align() + "></table>");
 
 			table.html(act.html());
 			act.replaceWith(table);
@@ -86,7 +87,8 @@ var bulletproofList = ((function(cheerio) {
 		for (idx = ols.length - 1; idx >= 0; idx -= 1) {
 			processOl($(ols[idx]));
 		}
-
+		// console.log($.html())
+		// console.log("==============================")
 		return $.html();
 	}
 
