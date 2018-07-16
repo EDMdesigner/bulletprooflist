@@ -4,51 +4,69 @@ var cheerio = require("cheerio");
 * Converts ordered and unordered lists to tables.
 */
 var bulletproofList = ((function(cheerio) {
-	function createProcessLiFn(numbered) {
-		var bullet = ((function() {
-			if (numbered) {
-				return function(idx) {
-					return idx + 1 + ".";
+
+	function processList(numbered) {
+
+		var processListElem = (function listElemBulletproofer(numbered) {
+			var listElemMarker = ((function() {
+				if (numbered) {
+					return function(idx) {
+						return idx + 1 + ".";
+					};
+				}
+	
+				return function() {
+					//return "*";
+					return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
+					//return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
+					//return "&bull;";
+					//return "&bullet;";
 				};
+			})());
+	
+			return function bulletProofLiElem(idx, actLiElem) {
+				var act = $(actLiElem);
+	
+				var actContent = act.html();
+	
+				var tr = $("<tr></tr>");
+	
+				tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + listElemMarker(idx) + "</td>"));
+				tr.append($("<td align=\"left\"></td>").html(actContent));
+				act.replaceWith(tr);
+			};
+		})(numbered);
+
+		return function processedList(act) {
+			var alignments = [];
+			var alignmentObj = act.children("li").each(processListElem).css(["text-align"]);
+			var actAlignProp = alignmentObj["text-align"];
+			
+			if (actAlignProp) {
+				alignments.push(actAlignProp);
 			}
 
-			return function() {
-				//return "*";
-				return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
-				//return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
-				//return "&bull;";
-				//return "&bullet;";
+			function align() {
+				if (alignments.length !== 0) {
+					var allMatch = alignments.every((currentValue, idx, array) => array[0] === currentValue);
+				}
+					
+				allMatch 
+					? alignment = " align=\"" +  alignments[0] + "\""
+					: alignment = "";
+
+				return alignment;
 			};
-		})());
 
-		return function processLi(idx, actLiElem) {
-			var act = $(actLiElem);
-
-			var actContent = act.html();
-
-			var tr = $("<tr></tr>");
-
-			tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + bullet(idx) + "</td>"));
-			tr.append($("<td align=\"left\"></td>").html(actContent));
-			act.replaceWith(tr);
-		};
-	}
-
-	function createProcessListElemFn(numbered) {
-		var liProcessor = createProcessLiFn(numbered);
-
-		return function processListElem(act) {
-			act.children("li").each(liProcessor);
-
-			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"></table>");
+			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"" + align() + "></table>");
 
 			table.html(act.html());
 			act.replaceWith(table);
 		};
 	}
 
-	var processOl = createProcessListElemFn(true);
-	var processUl = createProcessListElemFn(false);
+	var processOl = processList(true);
+	var processUl = processList(false);
 
 	function bulletproofList(htmlString) {
 		$ = cheerio.load(htmlString, {
@@ -69,7 +87,8 @@ var bulletproofList = ((function(cheerio) {
 		for (idx = ols.length - 1; idx >= 0; idx -= 1) {
 			processOl($(ols[idx]));
 		}
-
+		// console.log($.html())
+		// console.log("==============================")
 		return $.html();
 	}
 

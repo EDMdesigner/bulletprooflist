@@ -1,6 +1,6 @@
 {
   "name": "bulletprooflist",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Email-safe HTML list converter",
   "main": "src/bulletprooflist.js",
   "scripts": {
