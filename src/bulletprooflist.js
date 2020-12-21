@@ -3,18 +3,18 @@ var cheerio = require("cheerio");
 /**
 * Converts ordered and unordered lists to tables.
 */
-var bulletproofList = ((function(cheerio) {
+var bulletproofList = ((function (cheerio) {
 	function createProcessLiFn(numbered) {
-		var bullet = ((function() {
+		var bullet = ((function () {
 			if (numbered) {
-				return function(idx) {
-					return idx + 1 + ".";
+				return function (idx) {
+					return idx + 1 + ".&nbsp;";
 				};
 			}
 
-			return function() {
+			return function () {
 				//return "*";
-				return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
+				return "&#x02022;&nbsp;"; //not good: Lotus Notes 7, Outlook 2013
 				//return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
 				//return "&bull;";
 				//return "&bullet;";
@@ -28,7 +28,7 @@ var bulletproofList = ((function(cheerio) {
 
 			var tr = $("<tr></tr>");
 
-			tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + bullet(idx) + "</td>"));
+			tr.append($("<td align=\"right\" width=\"20\" valign=\"top\">" + bullet(idx) + "</td>"));
 			tr.append($("<td align=\"left\"></td>").html(actContent));
 			act.replaceWith(tr);
 		};
@@ -39,6 +39,12 @@ var bulletproofList = ((function(cheerio) {
 
 		return function processListElem(act) {
 			act.children("li").each(liProcessor);
+
+			var listLength = act.children("tr").children("td[width=\"20\"]").length;
+
+			if (listLength >= 10) {
+				act.children("tr").children("td[width=\"20\"]").attr("width", 20 + 15 * Math.floor(listLength / 10))
+			}
 
 			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"></table>");
 
@@ -76,8 +82,8 @@ var bulletproofList = ((function(cheerio) {
 	return bulletproofList;
 })(cheerio));
 
-(function (name, definition){
-	if (this && typeof this.define === "function"){ // AMD
+(function (name, definition) {
+	if (this && typeof this.define === "function") { // AMD
 		this.define(definition);
 	} else if (typeof module !== "undefined" && module.exports) { // Node.js
 		module.exports = definition();
