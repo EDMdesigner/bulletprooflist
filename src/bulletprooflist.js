@@ -8,13 +8,13 @@ var bulletproofList = ((function (cheerio) {
 		var bullet = ((function () {
 			if (numbered) {
 				return function (idx) {
-					return idx + 1 + ".&nbsp;";
+					return idx + 1 + ".";
 				};
 			}
 
 			return function () {
 				//return "*";
-				return "&#x02022;&nbsp;"; //not good: Lotus Notes 7, Outlook 2013
+				return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
 				//return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
 				//return "&bull;";
 				//return "&bullet;";
@@ -27,8 +27,7 @@ var bulletproofList = ((function (cheerio) {
 			var actContent = act.html();
 
 			var tr = $("<tr></tr>");
-
-			tr.append($("<td align=\"right\" width=\"20\" valign=\"top\">" + bullet(idx) + "</td>"));
+			tr.append($("<td align=\"right\" width=\"35\" valign=\"top\" style=\"padding-right:6px;\">" + bullet(idx) + "</td>"));
 			tr.append($("<td align=\"left\"></td>").html(actContent));
 			act.replaceWith(tr);
 		};
@@ -40,10 +39,18 @@ var bulletproofList = ((function (cheerio) {
 		return function processListElem(act) {
 			act.children("li").each(liProcessor);
 
-			var listLength = act.children("tr").children("td[width=\"20\"]").length;
+			var listLength = act.children("tr").children("td[width=\"35\"]").length;
+			var calcLength = listLength.toString().length;
+			var charLength = 3;
 
-			if (listLength >= 10) {
-				act.children("tr").children("td[width=\"20\"]").attr("width", 20 + 15 * Math.floor(listLength / 10))
+			if(calcLength >= 3){
+				charLength = 4;
+			}
+
+			act.children("tr").children("td[width=\"35\"]").attr("class", "charLength_"+charLength);
+
+			if (listLength >= 100 && numbered) {
+				act.children("tr").children("td[width=\"35\"]").attr("width", 35 + 15 * (calcLength - 1));
 			}
 
 			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"></table>");
