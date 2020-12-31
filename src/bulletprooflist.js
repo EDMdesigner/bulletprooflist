@@ -41,10 +41,10 @@ var bulletproofList = ((function (cheerio) {
 
 			var listLength = act.children("tr").children("td[width=\"35\"]").length;
 			var calcLength = listLength.toString().length;
-			var charLength = 3;
+			var charLength = 3; // default marker width in the current editor
 
 			if(calcLength >= 3){
-				charLength = 4;
+				charLength = calcLength;
 			}
 
 			act.children("tr").children("td[width=\"35\"]").attr("class", "charLength_"+charLength);
