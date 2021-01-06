@@ -3,16 +3,16 @@ var cheerio = require("cheerio");
 /**
 * Converts ordered and unordered lists to tables.
 */
-var bulletproofList = ((function(cheerio) {
+var bulletproofList = ((function (cheerio) {
 	function createProcessLiFn(numbered) {
-		var bullet = ((function() {
+		var bullet = ((function () {
 			if (numbered) {
-				return function(idx) {
+				return function (idx) {
 					return idx + 1 + ".";
 				};
 			}
 
-			return function() {
+			return function () {
 				//return "*";
 				return "&#x02022;"; //not good: Lotus Notes 7, Outlook 2013
 				//return "&#8226;"; //not good: Lotus Notes 7, Outlook 2013
@@ -27,8 +27,7 @@ var bulletproofList = ((function(cheerio) {
 			var actContent = act.html();
 
 			var tr = $("<tr></tr>");
-
-			tr.append($("<td align=\"left\" width=\"15\" valign=\"top\">" + bullet(idx) + "</td>"));
+			tr.append($("<td align=\"right\" width=\"35\" valign=\"top\" style=\"padding-right:6px;\">" + bullet(idx) + "</td>"));
 			tr.append($("<td align=\"left\"></td>").html(actContent));
 			act.replaceWith(tr);
 		};
@@ -39,6 +38,20 @@ var bulletproofList = ((function(cheerio) {
 
 		return function processListElem(act) {
 			act.children("li").each(liProcessor);
+
+			var listLength = act.children("tr").children("td[width=\"35\"]").length;
+			var calcLength = listLength.toString().length;
+			var charLength = 3; // default marker width in the current editor
+
+			if(calcLength >= 3){
+				charLength = calcLength;
+			}
+
+			act.children("tr").children("td[width=\"35\"]").attr("class", "charLength_"+charLength);
+
+			if (listLength >= 100 && numbered) {
+				act.children("tr").children("td[width=\"35\"]").attr("width", 35 + 15 * (calcLength - 1));
+			}
 
 			var table = $("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"></table>");
 
@@ -76,8 +89,8 @@ var bulletproofList = ((function(cheerio) {
 	return bulletproofList;
 })(cheerio));
 
-(function (name, definition){
-	if (this && typeof this.define === "function"){ // AMD
+(function (name, definition) {
+	if (this && typeof this.define === "function") { // AMD
 		this.define(definition);
 	} else if (typeof module !== "undefined" && module.exports) { // Node.js
 		module.exports = definition();
